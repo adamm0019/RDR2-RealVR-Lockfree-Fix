@@ -1,0 +1,7 @@
+# backups produced by the patcher
+*.orig_backup
+
+# build artifacts / local junk
+*.zip
+Thumbs.db
+desktop.ini
