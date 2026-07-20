@@ -1,0 +1,24 @@
+Paste this on the Nexus mod page. Replace the GitHub URL with your repo, and
+put the download link to the GitHub release (not a Nexus-hosted file, so it
+won't trip the scanner).
+
+------------------------------------------------------------------------
+
+Stops the "lockfree_table capacity exceeded" popup that freezes RDR2 with Luke
+Ross's R.E.A.L. VR mod. No more spamming OK, no more locking up after changing
+settings.
+
+It is a small, OPEN-SOURCE patcher that safely edits your own RealVR64.dll
+(makes a backup, one-click revert). It ships no mod files - you must already
+have R.E.A.L. VR installed. Story mode only.
+
+Because it's a script that modifies a game file, it's hosted on GitHub where
+the full source is readable - no hidden executables:
+
+  Download + source:  https://github.com/adamm0019/RDR2-RealVR-Lockfree-Fix
+
+How it works, and why it's safe, is explained in full on that page (it simply
+disables the mod's "capacity exceeded" message boxes so a full image table
+continues silently instead of freezing the game).
+
+Credit to Luke Ross for R.E.A.L. VR and to crosire for ReShade.
