@@ -20,31 +20,16 @@ run **`Apply Fix.bat`**. That's it.
 
 ## What the problem is
 
-R.E.A.L. VR tracks the game's Vulkan images in fixed-size lookup tables. Two of
-them — the ones holding full-resolution **colour render targets** — only have
-**128 slots**. Red Dead's renderer can exceed that, especially the moment you
-change a graphics/resolution setting, when it briefly holds the old *and* new set
-of render targets at once. When a table fills, the mod shows a **blocking
-`MessageBox`** and then continues anyway (it just skips tracking that image) — but
-because the dialog is modal, the game stops rendering while it's up, the popups
-pile on, and everything freezes.
+R.E.A.L. VR tracks the game's Vulkan images in fixed-size lookup tables. Two of them — the ones holding full-resolution **colour render targets** — only have **128 slots**. Red Dead's renderer can exceed that, especially the moment you change a graphics/resolution setting, when it briefly holds the old *and* new set of render targets at once. When a table fills, the mod shows a **blocking `MessageBox`** and then continues anyway (it just skips tracking that image), but because the dialog is modal, the game stops rendering while it's up, the popups
+pile on, and the game freezes.
 
 ## What this fix does
 
-It finds those exact "capacity exceeded" `MessageBoxA` calls inside your own copy
-of `RealVR64.dll` and replaces each `call` with `NOP`s, so a full table
-**silently continues** instead of throwing a dialog. Nothing else is touched.
-
-This is the interim fix — it removes the freeze. The proper upstream fix is to
-raise those tables' capacity (they should be 4096, matching the mod's depth-buffer
-table), which is a source change only Luke can compile. See
-[TECHNICAL_DETAILS.md](TECHNICAL_DETAILS.md) for the full analysis.
+It finds those exact "capacity exceeded" `MessageBoxA` calls inside your own copy of `RealVR64.dll` and replaces each `call` with `NOP`s, so a full table continues instead of throwing a dialog.
 
 ## How it works (for the curious / the cautious)
 
-It's a byte patcher, so here's exactly what it does — no black box. It scans the
-DLL for this instruction signature (the address operands are wildcarded, so it's
-build-independent) and NOPs the trailing 6-byte `call`:
+It scans the DLL for this instruction signature (the address operands are wildcarded, so it's build-independent) and NOPs the trailing 6-byte `call`:
 
 ```
 45 33 C9            xor  r9d, r9d          ; MessageBox uType = 0
@@ -54,9 +39,7 @@ build-independent) and NOPs the trailing 6-byte `call`:
 FF 15 ?? ?? ?? ??   call [MessageBoxA]     ; <-- replaced with 90 90 90 90 90 90
 ```
 
-That signature only occurs at the mod's capacity-exceeded handlers, so nothing
-else in the DLL is altered. The whole patcher is a single readable PowerShell
-script — [`patch_realvr.ps1`](patch_realvr.ps1) — with no dependencies.
+That signature only occurs at the mod's capacity-exceeded handlers, so nothing else in the DLL is altered. The whole patcher is a single readable PowerShell script — [`patch_realvr.ps1`](patch_realvr.ps1) — with no dependencies.
 
 ## Safety
 
@@ -68,8 +51,7 @@ script — [`patch_realvr.ps1`](patch_realvr.ps1) — with no dependencies.
 
 ## Revert
 
-Run **`Revert Fix.bat`** (restores the backup), or "Verify integrity of game
-files" on Steam.
+Run **`Revert Fix.bat`** (restores the backup), or "Verify integrity of game files" on Steam.
 
 ## Credits
 
@@ -80,6 +62,4 @@ files" on Steam.
 
 ## License
 
-[MIT](LICENSE) — applies to this patcher and its docs only. R.E.A.L. VR, ReShade,
-and Red Dead Redemption 2 are the property of their respective owners and are not
-included or redistributed here.
+[MIT](LICENSE) — applies to this patcher and its docs only. R.E.A.L. VR, ReShade, and Red Dead Redemption 2 are the property of their respective owners and are not included or redistributed here.
